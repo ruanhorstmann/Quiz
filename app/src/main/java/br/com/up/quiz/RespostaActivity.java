@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,29 +19,49 @@ public class RespostaActivity extends AppCompatActivity {
 
         ImageView imgResposta = (ImageView)findViewById(R.id.imgResposta);
         TextView resposta = (TextView)findViewById(R.id.resposta);
+        Button btnJogarNovamente = (Button)findViewById(R.id.btnJogarNovamente);
 
         Intent intent = getIntent();
-        boolean acertou = intent.getBooleanExtra("acertou", false);
-        if(acertou){
-            imgResposta.setImageResource(R.drawable.acertou);
-            resposta.setText("Acertou!");
+        int pontos = intent.getIntExtra("pontos", 0);
+
+        if(intent.hasExtra("acertou")) {
+            btnJogarNovamente.setVisibility(View.INVISIBLE);
+            boolean acertou = intent.getBooleanExtra("acertou", false);
+            if (acertou) {
+                imgResposta.setImageResource(R.drawable.acertou);
+                resposta.setText("Acertou! Pontos: " + pontos);
+            } else {
+                imgResposta.setImageResource(R.drawable.errou);
+                resposta.setText("Errou! Pontos: " + pontos);
+            }
+
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    finish();
+                }
+            });
+            thread.start();
         }
         else{
-            imgResposta.setImageResource(R.drawable.errou);
-            resposta.setText("Errou!");
-        }
+            btnJogarNovamente.setVisibility(View.VISIBLE);
+            resposta.setText("Fez " + pontos + " pontos!");
 
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                finish();
-            }
-        });
-        thread.start();
+            if(pontos >= 3)
+                imgResposta.setImageResource(R.drawable.acertou);
+            else
+                imgResposta.setImageResource(R.drawable.errou);
+        }
+    }
+
+    public void btnJogarNovamenteOnClick(View v){
+        Intent intent = new Intent(this, QuizActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
