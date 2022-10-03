@@ -3,6 +3,7 @@ package br.com.up.quiz;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +18,8 @@ public class RespostaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_resposta);
         getSupportActionBar().hide();
 
+        final MediaPlayer soundEfect = MediaPlayer.create(this, R.raw.applause);
+        final MediaPlayer erouu = MediaPlayer.create(this, R.raw.errou);
         ImageView imgResposta = (ImageView)findViewById(R.id.imgResposta);
         TextView resposta = (TextView)findViewById(R.id.resposta);
         Button btnJogarNovamente = (Button)findViewById(R.id.btnJogarNovamente);
@@ -28,11 +31,15 @@ public class RespostaActivity extends AppCompatActivity {
             btnJogarNovamente.setVisibility(View.INVISIBLE);
             boolean acertou = intent.getBooleanExtra("acertou", false);
             if (acertou) {
+                soundEfect.start();
                 imgResposta.setImageResource(R.drawable.acertou);
                 resposta.setText("Acertou! Pontos: " + pontos);
+
             } else {
+                erouu.start();
                 imgResposta.setImageResource(R.drawable.errou);
                 resposta.setText("Errou! Pontos: " + pontos);
+
             }
 
             Thread thread = new Thread(new Runnable() {
